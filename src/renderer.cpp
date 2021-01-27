@@ -21,12 +21,47 @@ double findNearest(Scene* scene, Ray* ray, Sphere** sphere){
         }
     }
 
-    return dist_min;
+    return dist_min == 1000000000.0f ? -1: dist_min ;
 }
 
-Color colorAt(Scene* scene,const Point& rayIntersection, Sphere* sphere){
+Color colorAt(Scene* scene, Point hitPoint, Vec3 hitNormal, Sphere* sphere){
     //std::cout << sphere->color.x;
-    return sphere->color;
+    Material material = sphere->material;
+    Color objColor = material.base;
+    Vec3 to_cam = scene->camera - hitPoint;
+    int specular_k = 50;
+
+    Color color = Color({0.0f, 0.0f, 0.0f})*material.ambient;
+    
+    for(int i=0; i<scene->nbLights; i++){
+        Ray to_light = Ray({hitPoint, (scene->lights[i]).position - hitPoint});
+        
+
+        // diffuse shadding lambert
+        double tmp = hitNormal*to_light.direction;
+        //std::cout << "BEFORE : " << color.x << color.y << color.z << std::endl;
+        color = color + objColor*material.diffuse*MAX(tmp, 0.0f);
+        //std::cout << "AFTER : " << color.x << color.y << color.z << std::endl;
+        // specular Blinn-Phong
+        Vec3 halfVector = (to_light.direction + to_cam);
+        halfVector = halfVector/halfVector.norm();
+        tmp = pow(hitNormal*halfVector, specular_k);
+        //std::cout << tmp << std::endl;
+        color = color + (scene->lights[i]).color*material.specular*MAX(tmp, 0);
+
+        if(color.x > 255){
+            color.x = 255;
+        }
+        if(color.y > 255){
+            color.y = 255;
+        }
+        if(color.z > 255){
+            color.z = 255;
+        }
+    }
+
+    //std::cout << color.x << color.y << color.z << std::endl;
+    return color;
 }
 
 Color rayTrace(Scene* scene, Ray* ray){
@@ -43,7 +78,9 @@ Color rayTrace(Scene* scene, Ray* ray){
     //std::cout << "NOT NULL" ;
 
     Point rayIntersection = ray->direction*dist + ray->origin;
-    color += colorAt(scene, rayIntersection, sphere);
+    Vec3 intersecTionNormal = sphere->normal(rayIntersection);
+
+    color += colorAt(scene, rayIntersection, intersecTionNormal, sphere);
     //std::cout << color.x << " " << color.y << " " << color.z << std::endl;
     return color;
 }

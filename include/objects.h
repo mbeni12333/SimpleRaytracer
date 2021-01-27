@@ -3,6 +3,7 @@
 
 #include "Core.h"
 #include <iostream>
+#include "material.h"
 
 struct Ray{
     Point origin;
@@ -17,7 +18,7 @@ struct Ray{
 struct Sphere{
 
     Vec3 position;
-    Color color;
+    Material material;
     double radius;
 
     double intersect(Ray* ray){
@@ -40,6 +41,14 @@ struct Sphere{
         }
 
         return -1;
+    }
+
+    Vec3 normal(Point hit_point){
+        
+        Vec3 nrml = (hit_point - position);
+        nrml = nrml/nrml.norm();
+
+        return nrml;
     }
 };
 

@@ -20,9 +20,9 @@ struct Vec3 {
 
     Vec3 operator += (Vec3 v){
 
-        x = x - v.x;
-        y = y - v.y;
-        z = z - v.z;
+        x += v.x;
+        y += v.y;
+        z += v.z;
 
         return *this;
     }
