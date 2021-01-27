@@ -20,7 +20,7 @@ app: $(OBJS)
 
 -include $(DEPS)
 
-$(DEST)/%.o: src/%.cpp Makefile
+$(DEST)/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCFLAGS)  -MMD -MP -c $^ -o $@
 	
 dirs:

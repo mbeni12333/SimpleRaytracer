@@ -4,49 +4,53 @@
 #include "image.h"
 
 
-image_t *createImage(){
+image_t *createImage(int width, int height){
     // Creates an empty image
 
     image_t* p;
     p = (image_t*) malloc(sizeof (image_t));
-    p->w = 0;
-    p->h = 0;
-    p->path = NULL;
-    p->buff = NULL;
+    p->w = width;
+    p->h = height;
+    p->path = nullptr;
+    p->buff = (Color*) malloc(sizeof (Color)*(p->w*p->h));
+
+	for(unsigned long i=0; i<p->w*p->h; i++){
+		p->buff[i] = Color({0.0f, 0.0f, 0.0f});
+	}
 
 	return p;
 }
-
+/*
 image_t *copyImage(image_t *src){
     // Create copy of image
-    image_t* p = createImage();
-    p->w = src->w;
-    p->h = src->h;
+    image_t* p = createImage(src->w, src->h);
     p->path = strdup(src->path);
-    p->buff = (unsigned char*) malloc(sizeof (unsigned char)*(src->w*src->h));
-    memcpy(p->buff,src->buff, sizeof (unsigned char)*(src->w*src->h));
+    p->buff = (Color*) malloc(sizeof (Color)*(src->w*src->h));
+    memcpy(p->buff,src->buff, sizeof (Color)*(src->w*src->h));
 
 	return p;
-}
+}*/
 
 
 int saveImage(char *fileName, image_t *img){
 
 	FILE* file = fopen(fileName, "w");
 
-	fprintf(file, "P2\n");
+	fprintf(file, "P3\n");
 	fprintf(file, "%lu %lu\n", img->w, img->h);
 	fprintf(file, "%u\n", 255);
 
-    unsigned char* begin = img->buff;
-    unsigned  char* end = img->buff + (img->h)*(img->w) - 1;
+    Color* begin = img->buff;
+    Color* end = img->buff + (img->h)*(img->w) - 1;
 
-    for(unsigned char* i = begin; i < end; i += img->w){
+    for(Color* i = begin; i < end; i += img->h){
 
-        unsigned char* end2 = i+img->w;
+        Color* end2 = i+img->h;
 
-        for(unsigned char* j = i; j < end2; j++){
-            fprintf(file, "%hhu " , *j);
+        for(Color* j = i; j < end2; j++){
+            fprintf(file, "%hhu " , (unsigned char)j->x);
+			fprintf(file, "%hhu " , (unsigned char)j->y);
+			fprintf(file, "%hhu " , (unsigned char)j->z);
         }
     }
     /*

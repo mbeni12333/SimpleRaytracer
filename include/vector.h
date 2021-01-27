@@ -1,8 +1,11 @@
-#ifndef __CORE__H_
-#define __Core__H_
+#ifndef __VECTOR__H_
+#define __VECTOR__H_
 
 #include <stdlib.h>
 #include <math.h>
+
+typedef struct Vec3 Vec3;
+
 
 struct Vec3 {
 
@@ -11,10 +14,30 @@ struct Vec3 {
 
     double norm(){
         // euclidean norm
-        return sqrt(pow(x, 2) + pow(y, 2) + + pow(z, 2));
+        return sqrt(x*x + y*y + z*z);
     }
 
-    Vec3& operator + (const Vec3& v){
+
+    Vec3 operator += (Vec3 v){
+
+        x = x - v.x;
+        y = y - v.y;
+        z = z - v.z;
+
+        return *this;
+    }
+
+    Vec3 operator - (Vec3 v){
+        Vec3* v_out = (Vec3*) malloc(sizeof(Vec3));
+
+        v_out->x = x - v.x;
+        v_out->y = y - v.y;
+        v_out->z = z - v.z;
+
+        return *v_out;
+    }
+
+    Vec3 operator + (Vec3 v){
         Vec3* v_out = (Vec3*) malloc(sizeof(Vec3));
 
         v_out->x = x + v.x;
@@ -23,7 +46,7 @@ struct Vec3 {
 
         return *v_out;
     }
-    Vec3& operator * (double k){
+    Vec3 operator * (double k){
         Vec3* v_out = (Vec3*) malloc(sizeof(Vec3));
 
         v_out->x = x*k;
@@ -32,7 +55,7 @@ struct Vec3 {
 
         return *v_out;
     }
-    Vec3& operator / (int k){
+    const Vec3 operator / (double k){
         Vec3* v_out = (Vec3*) malloc(sizeof(Vec3));
 
         v_out->x = x/k;
@@ -41,17 +64,17 @@ struct Vec3 {
 
         return *v_out;
     }
-    double operator * (const Vec3& v){
+    double operator * (Vec3 v){
         // dot product
         return x*v.x + y*v.y + z*v.z ;
     }
 
 };
 
-typedef struct Vec3 Vec3;
 
-Vec3& operator * (const Vec3& v, double k){return v*k;}
-Vec3& operator / (const Vec3& v, double k){return v*k;}
+
+//Vec3& operator * (const Vec3& v, double k){return v*k;}
+//Vec3& operator  / (const Vec3& v, double k){return v*k;}
 
 
 
