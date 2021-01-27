@@ -4,7 +4,7 @@
 Simple raytracer in pure c++
 
 Diffuse shading (Lambert)
-![](img/Diffuse.png)
+![](img/Diffuse.jpg)
 
 Diffuse+Specular shading (Phong)
-![](img/Diffuse+Specular.png)
+![](img/Diffuse+Specular.jpg)
